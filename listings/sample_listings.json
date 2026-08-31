@@ -12,7 +12,7 @@
     "condition_notes": "Runs and drives great, minor bed scratches",
     "seller": "private",
     "source": "craigslist",
-    "url": "https://sacramento.craigslist.org/example-tacoma"
+    "url": "https://example.invalid/SAMPLE-DATA-not-a-real-listing/2019-toyota-tacoma"
   },
   {
     "year": 2018,
@@ -27,7 +27,7 @@
     "condition_notes": "One owner, dealer maintained",
     "seller": "private",
     "source": "facebook_marketplace",
-    "url": "https://www.facebook.com/marketplace/item/example-crv"
+    "url": "https://example.invalid/SAMPLE-DATA-not-a-real-listing/2018-honda-cr-v"
   },
   {
     "year": 2015,
@@ -40,6 +40,6 @@
     "condition_notes": "Rebuilt after front collision, check engine light on",
     "seller": "private",
     "source": "offerup",
-    "url": "https://offerup.com/item/example-328i"
+    "url": "https://example.invalid/SAMPLE-DATA-not-a-real-listing/2015-bmw-328i"
   }
 ]

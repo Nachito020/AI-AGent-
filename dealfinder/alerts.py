@@ -34,7 +34,7 @@ def format_deal_alert(analysis: DealAnalysis) -> str:
         f"Vehicle: {listing.display_name()}",
         f"Year / Make / Model / Trim: {ymmt or 'N/A'}",
         f"Mileage: {listing.mileage:,}" if listing.mileage else "Mileage: N/A",
-        f"Source: {listing.source.value}" + (f" ({listing.url})" if listing.url else ""),
+        f"Source: {listing.source_label()}" + (f" ({listing.url})" if listing.url else ""),
         f"Location: {listing.location or 'N/A'}",
         f"Seller Asking: {_money(listing.asking_price)}",
         f"Possible Purchase Price: {_money(possible_price)}",

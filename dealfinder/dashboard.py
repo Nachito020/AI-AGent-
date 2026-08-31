@@ -185,6 +185,11 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .risks { margin: 14px 0 0; padding-left: 20px; font-size: 0.92rem; }
 .risks li { margin: 2px 0; }
 .why { margin-top: 12px; font-size: 0.95rem; font-style: italic; color: var(--muted); }
+.banner {
+  background: var(--warn-bg); color: var(--warn-ink);
+  border-radius: 6px; padding: 10px 16px; margin: 16px 0 0;
+  font-size: 0.92rem; font-weight: 600;
+}
 .empty {
   background: var(--surface); border: 1px dashed var(--line); border-radius: 8px;
   padding: 24px; color: var(--muted);
@@ -315,9 +320,9 @@ def _card(a: DealAnalysis) -> str:
     l = a.listing
     link = (
         f'<a class="listing" href="{html.escape(l.url, quote=True)}" '
-        f'target="_blank" rel="noopener">View listing on {_esc(l.source.value)} ↗</a>'
+        f'target="_blank" rel="noopener">View listing on {_esc(l.source_label())} ↗</a>'
         if l.url
-        else f"Source: {_esc(l.source.value)}"
+        else f"Source: {_esc(l.source_label())}"
     )
     facts = [
         f'<span class="vin">VIN {_esc(l.vin)}</span>',
@@ -365,6 +370,7 @@ def render_dashboard(
     *,
     generated_at: datetime | None = None,
     full_page: bool = True,
+    banner: str | None = None,
 ) -> str:
     """Render analyses to HTML. ``full_page=False`` omits the document shell."""
     generated_at = generated_at or datetime.now(timezone.utc)
@@ -409,6 +415,7 @@ def render_dashboard(
     <h1>Deal Finder Lot Board</h1>
     <p class="sub">{html.escape(settings.location)} · profit floor {_money(settings.min_profit)}
     · generated {generated_at.strftime('%Y-%m-%d %H:%M UTC')}</p>
+  {f'<div class="banner">{html.escape(banner)}</div>' if banner else ''}
   </header>
   <div class="kpis">{kpi_html}</div>
   {body}
@@ -428,10 +435,14 @@ def render_dashboard(
 
 
 def write_dashboard(
-    analyses: list[DealAnalysis], settings: Settings, path: str
+    analyses: list[DealAnalysis],
+    settings: Settings,
+    path: str,
+    *,
+    banner: str | None = None,
 ) -> str:
     from pathlib import Path
 
     out = Path(path)
-    out.write_text(render_dashboard(analyses, settings))
+    out.write_text(render_dashboard(analyses, settings, banner=banner))
     return str(out)

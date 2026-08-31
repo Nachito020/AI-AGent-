@@ -77,6 +77,18 @@ DEFAULT_SCHEDULES: dict[SourceType, FeeSchedule] = {
     SourceType.GOVDEALS: FeeSchedule(
         premium_tiers=[PremiumTier(up_to=None, rate=0.125)],
     ),
+    # Public government-surplus auctions. GSA charges no buyer premium; the
+    # others vary by seller/agency — verify per lot before bidding.
+    SourceType.GSA_AUCTIONS: FeeSchedule(),
+    SourceType.PUBLICSURPLUS: FeeSchedule(
+        premium_tiers=[PremiumTier(up_to=None, rate=0.10)],
+    ),
+    SourceType.MUNICIBID: FeeSchedule(
+        premium_tiers=[PremiumTier(up_to=None, rate=0.10)],
+    ),
+    SourceType.ALLSURPLUS: FeeSchedule(
+        premium_tiers=[PremiumTier(up_to=None, rate=0.125)],
+    ),
     SourceType.RITCHIE_BROS: FeeSchedule(
         premium_tiers=[PremiumTier(up_to=None, rate=0.10)],
     ),

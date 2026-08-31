@@ -25,14 +25,17 @@ from .models import Decision
 from .pipeline import analyze_batch, run_scan, strong_deals
 
 
-def _report(settings: Settings, analyses, html_path: str | None = None) -> None:
+def _report(
+    settings: Settings, analyses, html_path: str | None = None, banner: str | None = None
+) -> None:
     strong = strong_deals(settings, analyses)
     review = [a for a in analyses if a.decision == Decision.MANUAL_REVIEW]
 
     if html_path:
         from .dashboard import write_dashboard
 
-        print(f"Dashboard written to {write_dashboard(analyses, settings, html_path)}")
+        out = write_dashboard(analyses, settings, html_path, banner=banner)
+        print(f"Dashboard written to {out}")
 
     if not analyses:
         print("No candidates cleared the profit floor. (Passing on marginal deals is the job.)")
@@ -134,7 +137,14 @@ def cmd_demo(args) -> int:
             )
         )
     rank_deals(analyses)  # assigns scores in place on non-PASS deals
-    _report(settings, analyses, args.html)
+    _report(
+        settings, analyses, args.html,
+        banner=(
+            "Demo data — these vehicles, prices, and listing links are "
+            "illustrative placeholders, not real listings. Run "
+            "`dealfinder scan` for live results with real URLs."
+        ),
+    )
     return 0
 
 

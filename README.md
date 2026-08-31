@@ -13,11 +13,14 @@ vehicles with a clear, defensible pricing mismatch.
 discover -> dedupe -> value -> cost -> profit -> risk -> rank -> alert
 ```
 
-1. **Discover** — Claude (with server-side web search) sweeps public listing
-   sites (Craigslist, Autotrader, Cars.com, CarGurus, dealer sites, public
-   auction pages) for candidates. Listings from login-walled marketplaces
-   (Facebook Marketplace, OfferUp) and auction accounts (Copart, IAA,
-   GovDeals, Ritchie Bros., IronPlanet) are fed in via `dealfinder analyze`
+1. **Discover** — Claude (with server-side web search) sweeps the public sites
+   listed under `search_sites` in your config: Craigslist, Autotrader,
+   Cars.com, CarGurus, eBay Motors, TrueCar, Carvana, CarMax, Edmunds,
+   AutoTempest, Hemmings, dealer websites, and public government-surplus
+   auctions (GSA Auctions, GovDeals, PublicSurplus, Municibid, AllSurplus)
+   plus public Copart/IAA and local auction pages. Edit that list to add or
+   drop sites. Login-walled marketplaces (Facebook Marketplace, OfferUp) and
+   dealer-only auctions (Manheim, ADESA) are fed in via `dealfinder analyze`
    from JSON/CSV exports — see *A note on logins* below.
 2. **Dedupe** — duplicates removed by VIN, or fuzzy year/make/model/mileage/price.
 3. **Value** — Claude researches each candidate against multiple pricing
@@ -55,7 +58,9 @@ cp .env.example .env                 # add ANTHROPIC_API_KEY
 ## Usage
 
 ```bash
-# Offline demo of the full deal math on sample data (no API key needed)
+# Offline demo of the full deal math on sample data (no API key needed).
+# NOTE: demo vehicles, prices, and links are placeholders, not real listings —
+# the URLs point at example.invalid and will not open. Use `scan` for real ones.
 dealfinder demo
 
 # Live scan: discover candidates online, research values, rank deals

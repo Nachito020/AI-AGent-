@@ -57,6 +57,21 @@ def test_dashboard_fragment_has_no_document_shell():
     assert full.lower().startswith("<!doctype html>")
 
 
+def test_dashboard_banner_rendered_and_escaped():
+    html = render_dashboard([_analysis()], Settings(), banner="Demo data <not real>")
+    assert 'class="banner"' in html
+    assert "Demo data &lt;not real&gt;" in html
+    assert 'class="banner"' not in render_dashboard([_analysis()], Settings())
+
+
+def test_source_label_falls_back_to_detail():
+    analysis = _analysis()
+    analysis.listing.source = SourceType.OTHER
+    analysis.listing.source_detail = "Bob's Auto Sales"
+    html = render_dashboard([analysis], Settings())
+    assert "Bob&#x27;s Auto Sales" in html
+
+
 def test_dashboard_empty_state():
     html = render_dashboard([], Settings())
     assert "No candidates analyzed yet" in html

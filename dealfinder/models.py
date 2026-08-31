@@ -25,12 +25,21 @@ class SourceType(str, Enum):
     AUTOTRADER = "autotrader"
     CARS_COM = "cars_com"
     CARGURUS = "cargurus"
+    EBAY_MOTORS = "ebay_motors"
+    CARVANA = "carvana"
+    CARMAX = "carmax"
+    TRUECAR = "truecar"
+    HEMMINGS = "hemmings"
     DEALER = "dealer"
     COPART = "copart"
     IAA = "iaa"
     MANHEIM = "manheim"  # dealer-only
     ADESA = "adesa"  # dealer-only
     GOVDEALS = "govdeals"
+    GSA_AUCTIONS = "gsa_auctions"
+    PUBLICSURPLUS = "publicsurplus"
+    MUNICIBID = "municibid"
+    ALLSURPLUS = "allsurplus"
     RITCHIE_BROS = "ritchie_bros"
     IRONPLANET = "ironplanet"
     LOCAL_AUCTION = "local_auction"
@@ -43,6 +52,10 @@ AUCTION_SOURCES = {
     SourceType.MANHEIM,
     SourceType.ADESA,
     SourceType.GOVDEALS,
+    SourceType.GSA_AUCTIONS,
+    SourceType.PUBLICSURPLUS,
+    SourceType.MUNICIBID,
+    SourceType.ALLSURPLUS,
     SourceType.RITCHIE_BROS,
     SourceType.IRONPLANET,
     SourceType.LOCAL_AUCTION,
@@ -64,6 +77,7 @@ class VehicleListing(BaseModel):
     condition_notes: Optional[str] = None
     seller: Optional[str] = None
     source: SourceType = SourceType.OTHER
+    source_detail: Optional[str] = None  # site name when source is OTHER
     url: Optional[str] = None
 
     # Optional risk-relevant facts, when known
@@ -76,6 +90,11 @@ class VehicleListing(BaseModel):
     @property
     def is_auction(self) -> bool:
         return self.source in AUCTION_SOURCES
+
+    def source_label(self) -> str:
+        if self.source == SourceType.OTHER and self.source_detail:
+            return self.source_detail
+        return self.source.value
 
     def display_name(self) -> str:
         parts = [str(self.year) if self.year else "?", self.make or "?", self.model or "?"]

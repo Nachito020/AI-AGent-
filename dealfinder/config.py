@@ -28,6 +28,31 @@ class Settings(BaseModel):
         default_factory=lambda: ["cars", "pickup trucks", "SUVs", "vans"]
     )
     max_candidates_per_scan: int = 10
+    # Public sites the discovery agent sweeps. Login-walled marketplaces are
+    # handled via `dealfinder analyze` imports instead.
+    search_sites: list[str] = Field(
+        default_factory=lambda: [
+            "Craigslist",
+            "Autotrader",
+            "Cars.com",
+            "CarGurus",
+            "eBay Motors",
+            "TrueCar",
+            "Carvana",
+            "CarMax",
+            "Edmunds listings",
+            "AutoTempest (aggregator)",
+            "Hemmings",
+            "franchise and independent dealer websites",
+            "GSA Auctions (govt fleet, no buyer premium)",
+            "GovDeals",
+            "PublicSurplus",
+            "Municibid",
+            "AllSurplus",
+            "public Copart/IAA search pages",
+            "local auction house listings",
+        ]
+    )
     costs: CostDefaults = Field(default_factory=CostDefaults)
     model: str = "claude-opus-5"
 

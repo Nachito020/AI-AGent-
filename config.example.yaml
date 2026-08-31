@@ -17,6 +17,31 @@ vehicle_types:
 # API tokens for web-search valuation).
 max_candidates_per_scan: 10
 
+# Public sites the discovery agent sweeps. Add or remove freely — these are
+# passed to the search agent verbatim. Login-walled marketplaces (Facebook
+# Marketplace, OfferUp) and dealer-only auctions (Manheim, ADESA) are not
+# scraped; feed those in via `dealfinder analyze` exports instead.
+search_sites:
+  - Craigslist
+  - Autotrader
+  - Cars.com
+  - CarGurus
+  - eBay Motors
+  - TrueCar
+  - Carvana
+  - CarMax
+  - Edmunds listings
+  - AutoTempest (aggregator)
+  - Hemmings
+  - franchise and independent dealer websites
+  - GSA Auctions (govt fleet, no buyer premium)
+  - GovDeals
+  - PublicSurplus
+  - Municibid
+  - AllSurplus
+  - public Copart/IAA search pages
+  - local auction house listings
+
 # Default cost assumptions applied when a listing has no specific estimate.
 #
 # PRIVATE BUYER (default): you pay sales tax at purchase and register the

@@ -14,9 +14,11 @@ from pydantic import BaseModel, Field
 from .config import Settings
 from .models import SourceType, TitleStatus, Valuation, ValuationSource, VehicleListing
 
-WEB_SEARCH_TOOL = {"type": "web_search_20260209", "name": "web_search", "max_uses": 12}
-
 _MAX_RESEARCH_TURNS = 8
+
+
+def _web_search_tool(max_uses: int) -> dict:
+    return {"type": "web_search_20260209", "name": "web_search", "max_uses": max_uses}
 
 
 class DiscoveredListing(BaseModel):
@@ -32,6 +34,7 @@ class DiscoveredListing(BaseModel):
     condition_notes: Optional[str] = None
     seller: Optional[str] = None
     source: str = "other"
+    source_detail: Optional[str] = None  # site name if not a known source type
     url: Optional[str] = None
 
 
@@ -57,7 +60,7 @@ def _client():
     return anthropic.Anthropic()
 
 
-def _research(client, model: str, system: str, prompt: str) -> str:
+def _research(client, model: str, system: str, prompt: str, *, max_searches: int = 12) -> str:
     """Run a web-search research loop and return the model's final text."""
     user_turn = {"role": "user", "content": prompt}
     messages = [user_turn]
@@ -69,7 +72,7 @@ def _research(client, model: str, system: str, prompt: str) -> str:
             betas=["server-side-fallback-2026-07-01"],
             fallbacks="default",
             system=system,
-            tools=[WEB_SEARCH_TOOL],
+            tools=[_web_search_tool(max_searches)],
             messages=messages,
         )
         if response.stop_reason == "pause_turn":
@@ -102,15 +105,15 @@ def _extract(client, model: str, text: str, schema: type[BaseModel]) -> BaseMode
 
 
 DISCOVERY_SYSTEM = """You are a vehicle sourcing researcher for a licensed reseller.
-Search public vehicle listing sites (Craigslist, Autotrader, Cars.com, CarGurus,
-CarMax, dealer sites, public auction result pages) for currently-listed vehicles
-matching the request. For each candidate, capture: year, make, model, trim,
-mileage, VIN if shown, asking price, location, title status, condition notes,
-seller type, source site, and the listing URL.
+Search public vehicle listing sites for currently-listed vehicles matching the
+request, sweeping as many of the requested sites as the search budget allows —
+do not stop after the first site that returns results. For each candidate,
+capture: year, make, model, trim, mileage, VIN if shown, asking price, location,
+title status, condition notes, seller type, source site name, and the listing URL.
 
 Rules:
-- Only report listings you actually found, with their real URLs. Never invent
-  listings, prices, or VINs.
+- Only report listings you actually found, with their real URLs copied exactly
+  from the search results. Never invent listings, prices, VINs, or URLs.
 - Prefer listings that look priced below typical comparable listings.
 - Skip obvious scams (prices far below market with no explanation, stock photos,
   shipping-only sellers)."""
@@ -138,14 +141,17 @@ Never invent a source or a number."""
 def discover_listings(settings: Settings, query: str) -> list[VehicleListing]:
     """Search the web for candidate listings matching a query."""
     client = _client()
+    sites = "\n".join(f"- {s}" for s in settings.search_sites)
     prompt = (
         f"Find up to {settings.max_candidates_per_scan} used-vehicle listings "
         f"({', '.join(settings.vehicle_types)}) near {settings.location} "
         f"(within ~{settings.search_radius_miles} miles) that appear underpriced "
         f"relative to comparable listings. Focus: {query or 'any strong candidates'}. "
-        "Report each listing with all details you can find."
+        f"Search across these sites:\n{sites}\n"
+        "Report each listing with all details you can find, including which "
+        "site it came from and its exact URL."
     )
-    text = _research(client, settings.model, DISCOVERY_SYSTEM, prompt)
+    text = _research(client, settings.model, DISCOVERY_SYSTEM, prompt, max_searches=25)
     report: DiscoveryReport = _extract(client, settings.model, text, DiscoveryReport)
 
     listings = []
