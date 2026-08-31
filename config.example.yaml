@@ -18,6 +18,9 @@ vehicle_types:
 max_candidates_per_scan: 10
 
 # Default cost assumptions applied when a listing has no specific estimate.
+#
+# PRIVATE BUYER (default): you pay sales tax at purchase and register the
+# vehicle in your own name.
 costs:
   tax_rate: 0.0725          # sales/use tax as a fraction of purchase price
   registration_fee: 350
@@ -25,6 +28,25 @@ costs:
   repair_estimate: 1000     # conservative buffer when condition is unknown
   inspection_detailing: 250
   other_fees: 0
+
+# LICENSED DEALER buying for resale inventory: in most states you buy under a
+# resale exemption (no sales tax at purchase — your retail buyer pays it) and
+# the vehicle is not registered in your name. Swap the block above for:
+#
+# costs:
+#   tax_rate: 0             # resale exemption — verify with your state
+#   registration_fee: 100   # buffer for title transfer / doc / flooring fees
+#   transport_cost: 300
+#   repair_estimate: 1000
+#   inspection_detailing: 250
+#   other_fees: 0
+#
+# Notes:
+# - Rules vary by state; confirm the exemption specifics with your DMV/state
+#   tax authority. Keeping a vehicle for personal/shop use usually voids it.
+# - A dealer license also unlocks dealer-only sources (source types "manheim"
+#   and "adesa", plus dealer lanes at Copart/IAA). Their buy-fee schedules are
+#   in dealfinder/costs.py — verify against your auction's current fee sheet.
 
 # Anthropic model used for discovery and valuation research.
 model: claude-opus-5

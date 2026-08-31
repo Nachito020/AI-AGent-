@@ -108,6 +108,14 @@ Auction fee schedules live in `dealfinder/costs.py` and are simplified
 defaults — verify against the auction house's current fee table before
 bidding.
 
+**Licensed dealers:** buying for resale inventory usually means no sales tax
+at purchase (resale exemption) and no registration in your name — set
+`tax_rate: 0` and a small `registration_fee` buffer per the dealer block in
+`config.example.yaml`. That lowers all-in cost and raises the max buy price
+the agent will approve. Dealer-only auction sources (`manheim`, `adesa`) are
+supported with tiered buy-fee schedules. State rules vary; verify the
+exemption with your DMV/state tax authority.
+
 ## Tests
 
 ```bash

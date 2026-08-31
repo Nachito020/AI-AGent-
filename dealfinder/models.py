@@ -28,6 +28,8 @@ class SourceType(str, Enum):
     DEALER = "dealer"
     COPART = "copart"
     IAA = "iaa"
+    MANHEIM = "manheim"  # dealer-only
+    ADESA = "adesa"  # dealer-only
     GOVDEALS = "govdeals"
     RITCHIE_BROS = "ritchie_bros"
     IRONPLANET = "ironplanet"
@@ -38,6 +40,8 @@ class SourceType(str, Enum):
 AUCTION_SOURCES = {
     SourceType.COPART,
     SourceType.IAA,
+    SourceType.MANHEIM,
+    SourceType.ADESA,
     SourceType.GOVDEALS,
     SourceType.RITCHIE_BROS,
     SourceType.IRONPLANET,

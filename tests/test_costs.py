@@ -30,6 +30,22 @@ def test_auction_costs_include_premium_and_fixed_fees():
     assert costs.all_in_cost == 10000 + 750 + 400 + 1500 + 258
 
 
+def test_manheim_flat_tier_fees():
+    schedule = DEFAULT_SCHEDULES[SourceType.MANHEIM]
+    assert buyer_premium(8000, schedule) == 300.0
+    assert buyer_premium(25000, schedule) == 550.0
+
+
+def test_dealer_auction_listing_is_auction_with_fees():
+    listing = VehicleListing(make="Toyota", model="Tacoma", source=SourceType.MANHEIM)
+    assert listing.is_auction
+    # Dealer resale purchase: no sales tax, small title/doc buffer.
+    costs = estimate_costs(listing, 18000, tax_rate=0.0, registration_fee=100)
+    assert costs.buyer_premium == 425.0  # $10k-$20k tier
+    assert costs.taxes_registration == 100.0
+    assert costs.other_fees == 125.0  # online buy fee
+
+
 def test_all_in_cost_sums_everything():
     listing = VehicleListing(make="Toyota", model="Camry", source=SourceType.CARS_COM)
     costs = estimate_costs(

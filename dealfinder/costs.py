@@ -51,6 +51,29 @@ DEFAULT_SCHEDULES: dict[SourceType, FeeSchedule] = {
         fixed_fees=135.0,
         internet_bid_fee=120.0,
     ),
+    # Dealer-only wholesale auctions. Buy fees are flat tiers by hammer price;
+    # these are simplified national figures — actual fees vary by location and
+    # lane, so verify against your Manheim/ADESA fee sheet before bidding.
+    SourceType.MANHEIM: FeeSchedule(
+        premium_tiers=[
+            PremiumTier(up_to=2500.0, flat=150.0),
+            PremiumTier(up_to=5000.0, flat=225.0),
+            PremiumTier(up_to=10000.0, flat=300.0),
+            PremiumTier(up_to=20000.0, flat=425.0),
+            PremiumTier(up_to=None, flat=550.0),
+        ],
+        internet_bid_fee=125.0,  # Simulcast/OVE online buy fee
+    ),
+    SourceType.ADESA: FeeSchedule(
+        premium_tiers=[
+            PremiumTier(up_to=2500.0, flat=160.0),
+            PremiumTier(up_to=5000.0, flat=235.0),
+            PremiumTier(up_to=10000.0, flat=310.0),
+            PremiumTier(up_to=20000.0, flat=435.0),
+            PremiumTier(up_to=None, flat=560.0),
+        ],
+        internet_bid_fee=120.0,
+    ),
     SourceType.GOVDEALS: FeeSchedule(
         premium_tiers=[PremiumTier(up_to=None, rate=0.125)],
     ),
