@@ -67,6 +67,12 @@ dealfinder analyze listings/my_export.csv --no-research   # skip API valuation
 
 # Draft seller questions (drafts only — you send them)
 dealfinder contact listings/my_export.json
+
+# Any of scan/analyze/demo can also emit an HTML dashboard: per-vehicle
+# cards with VIN, listing link, Carvana cash offer, itemized extra costs,
+# a value-vs-cost bar, and risk flags. Open the file in any browser.
+dealfinder scan --html lot_board.html
+dealfinder demo --html lot_board.html
 ```
 
 `listings/sample_listings.json` shows the JSON shape; CSV files use the same

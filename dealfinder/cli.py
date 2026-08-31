@@ -25,9 +25,14 @@ from .models import Decision
 from .pipeline import analyze_batch, run_scan, strong_deals
 
 
-def _report(settings: Settings, analyses) -> None:
+def _report(settings: Settings, analyses, html_path: str | None = None) -> None:
     strong = strong_deals(settings, analyses)
     review = [a for a in analyses if a.decision == Decision.MANUAL_REVIEW]
+
+    if html_path:
+        from .dashboard import write_dashboard
+
+        print(f"Dashboard written to {write_dashboard(analyses, settings, html_path)}")
 
     if not analyses:
         print("No candidates cleared the profit floor. (Passing on marginal deals is the job.)")
@@ -49,7 +54,7 @@ def cmd_scan(args) -> int:
     settings = load_settings(args.config)
     print(f"Scanning near {settings.location} (min profit ${settings.min_profit:,.0f})...")
     analyses = run_scan(settings, args.query or "")
-    _report(settings, analyses)
+    _report(settings, analyses, args.html)
     return 0
 
 
@@ -60,7 +65,7 @@ def cmd_analyze(args) -> int:
     listings = load_listings(args.file)
     print(f"Analyzing {len(listings)} imported listing(s)...")
     analyses = analyze_batch(settings, listings, research=not args.no_research)
-    _report(settings, analyses)
+    _report(settings, analyses, args.html)
     return 0
 
 
@@ -128,7 +133,8 @@ def cmd_demo(args) -> int:
                 why_underpriced="Demo data: priced below comparable listings",
             )
         )
-    _report(settings, rank_deals(analyses))
+    rank_deals(analyses)  # assigns scores in place on non-PASS deals
+    _report(settings, analyses, args.html)
     return 0
 
 
@@ -139,11 +145,13 @@ def main(argv: list[str] | None = None) -> int:
 
     p_scan = sub.add_parser("scan", help="Discover, value, and rank deals online")
     p_scan.add_argument("--query", default="", help="Focus, e.g. 'Toyota trucks under $25k'")
+    p_scan.add_argument("--html", default=None, help="Also write an HTML dashboard here")
     p_scan.set_defaults(func=cmd_scan)
 
     p_an = sub.add_parser("analyze", help="Analyze imported listings (JSON/CSV)")
     p_an.add_argument("file")
     p_an.add_argument("--no-research", action="store_true", help="Skip API valuation")
+    p_an.add_argument("--html", default=None, help="Also write an HTML dashboard here")
     p_an.set_defaults(func=cmd_analyze)
 
     p_ct = sub.add_parser("contact", help="Draft seller questions for listings")
@@ -151,6 +159,7 @@ def main(argv: list[str] | None = None) -> int:
     p_ct.set_defaults(func=cmd_contact)
 
     p_demo = sub.add_parser("demo", help="Offline demo on sample data")
+    p_demo.add_argument("--html", default=None, help="Also write an HTML dashboard here")
     p_demo.set_defaults(func=cmd_demo)
 
     args = parser.parse_args(argv)
