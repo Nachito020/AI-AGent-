@@ -126,6 +126,8 @@ def cmd_demo(args) -> int:
         ),
     }
 
+    from .verify import check_url
+
     analyses = []
     for listing in listings:
         key = f"{listing.year} {listing.make} {listing.model}"
@@ -134,6 +136,7 @@ def cmd_demo(args) -> int:
             analyze_listing(
                 settings, listing, valuation,
                 why_underpriced="Demo data: priced below comparable listings",
+                url_status=check_url(listing.url),
             )
         )
     rank_deals(analyses)  # assigns scores in place on non-PASS deals

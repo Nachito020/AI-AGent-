@@ -28,31 +28,35 @@ class Settings(BaseModel):
         default_factory=lambda: ["cars", "pickup trucks", "SUVs", "vans"]
     )
     max_candidates_per_scan: int = 10
-    # Public sites the discovery agent sweeps. Login-walled marketplaces are
-    # handled via `dealfinder analyze` imports instead.
+    # Public sites the discovery agent sweeps, most-reachable first.
+    # Craigslist and Cars.com were verified to serve listings to automated
+    # requests; Autotrader, GovDeals and GSA Auctions return HTTP 403 to bots,
+    # so they are listed last and often need a manual export instead.
+    # Login-walled marketplaces are handled via `dealfinder analyze` imports.
     search_sites: list[str] = Field(
         default_factory=lambda: [
             "Craigslist",
-            "Autotrader",
             "Cars.com",
             "CarGurus",
             "eBay Motors",
             "TrueCar",
-            "Carvana",
-            "CarMax",
             "Edmunds listings",
             "AutoTempest (aggregator)",
             "Hemmings",
             "franchise and independent dealer websites",
-            "GSA Auctions (govt fleet, no buyer premium)",
-            "GovDeals",
+            "Carvana",
             "PublicSurplus",
             "Municibid",
             "AllSurplus",
-            "public Copart/IAA search pages",
             "local auction house listings",
+            "Autotrader",
+            "GovDeals",
+            "GSA Auctions (govt fleet, no buyer premium)",
         ]
     )
+    # Check that each discovered listing URL actually resolves before it
+    # reaches the board. A dead or placeholder link blocks a recommendation.
+    verify_listing_urls: bool = True
     costs: CostDefaults = Field(default_factory=CostDefaults)
     model: str = "claude-opus-5"
 

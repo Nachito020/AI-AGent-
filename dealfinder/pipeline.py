@@ -20,6 +20,7 @@ def analyze_listing(
     *,
     repair_estimate: Optional[float] = None,
     why_underpriced: Optional[str] = None,
+    url_status: Optional[tuple[str, str]] = None,
 ) -> DealAnalysis:
     """Run the deterministic deal math for one listing with a known valuation."""
     c = settings.costs
@@ -58,6 +59,12 @@ def analyze_listing(
             )
 
     flags = assess_risk(listing, valuation)
+    if url_status is not None:
+        from .verify import url_risk_flag
+
+        flag = url_risk_flag(*url_status)
+        if flag is not None:
+            flags.append(flag)
     decision = decide(flags, profit, settings.min_profit)
 
     return DealAnalysis(
@@ -76,10 +83,14 @@ def analyze_listing(
 def run_scan(settings: Settings, query: str = "") -> list[DealAnalysis]:
     """Full pipeline: discover listings online, research values, rank deals."""
     from .agent import discover_listings, research_valuation  # requires API key
+    from .verify import verify_listings
 
     listings = dedupe_listings(discover_listings(settings, query))
+    listings = listings[: settings.max_candidates_per_scan]
+    statuses = verify_listings(listings) if settings.verify_listing_urls else {}
+
     analyses = []
-    for listing in listings[: settings.max_candidates_per_scan]:
+    for listing in listings:
         try:
             valuation, repairs, why = research_valuation(settings, listing)
         except Exception as exc:  # keep scanning if one valuation fails
@@ -89,6 +100,7 @@ def run_scan(settings: Settings, query: str = "") -> list[DealAnalysis]:
             analyze_listing(
                 settings, listing, valuation,
                 repair_estimate=repairs, why_underpriced=why,
+                url_status=statuses.get(id(listing)),
             )
         )
     return rank_deals(analyses)
@@ -101,7 +113,11 @@ def analyze_batch(
     research: bool = True,
 ) -> list[DealAnalysis]:
     """Analyze imported listings; with research=True, value each via the API."""
+    from .verify import verify_listings
+
     listings = dedupe_listings(listings)
+    statuses = verify_listings(listings) if settings.verify_listing_urls else {}
+
     analyses = []
     for listing in listings:
         if research:
@@ -114,6 +130,7 @@ def analyze_batch(
             analyze_listing(
                 settings, listing, valuation,
                 repair_estimate=repairs, why_underpriced=why,
+                url_status=statuses.get(id(listing)),
             )
         )
     return rank_deals(analyses)
