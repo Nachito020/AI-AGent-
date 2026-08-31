@@ -1,0 +1,30 @@
+# Copy to config.yaml and adjust. config.yaml is gitignored.
+
+location: "Sacramento, CA"
+search_radius_miles: 150
+
+# Profit gates (USD)
+min_profit: 5000
+preferred_profit: 7500
+
+vehicle_types:
+  - cars
+  - pickup trucks
+  - SUVs
+  - vans
+
+# How many candidate listings to fully research per scan (each one costs
+# API tokens for web-search valuation).
+max_candidates_per_scan: 10
+
+# Default cost assumptions applied when a listing has no specific estimate.
+costs:
+  tax_rate: 0.0725          # sales/use tax as a fraction of purchase price
+  registration_fee: 350
+  transport_cost: 300       # towing/transport to you
+  repair_estimate: 1000     # conservative buffer when condition is unknown
+  inspection_detailing: 250
+  other_fees: 0
+
+# Anthropic model used for discovery and valuation research.
+model: claude-opus-5

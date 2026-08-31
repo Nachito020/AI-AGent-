@@ -1,0 +1,45 @@
+[
+  {
+    "year": 2019,
+    "make": "Toyota",
+    "model": "Tacoma",
+    "trim": "TRD Off-Road",
+    "mileage": 62000,
+    "vin": "3TMCZ5AN0KM123456",
+    "asking_price": 21500,
+    "location": "Sacramento, CA",
+    "title_status": "clean",
+    "condition_notes": "Runs and drives great, minor bed scratches",
+    "seller": "private",
+    "source": "craigslist",
+    "url": "https://sacramento.craigslist.org/example-tacoma"
+  },
+  {
+    "year": 2018,
+    "make": "Honda",
+    "model": "CR-V",
+    "trim": "EX",
+    "mileage": 78000,
+    "vin": "2HKRW2H55JH654321",
+    "asking_price": 14800,
+    "location": "Elk Grove, CA",
+    "title_status": "clean",
+    "condition_notes": "One owner, dealer maintained",
+    "seller": "private",
+    "source": "facebook_marketplace",
+    "url": "https://www.facebook.com/marketplace/item/example-crv"
+  },
+  {
+    "year": 2015,
+    "make": "BMW",
+    "model": "328i",
+    "mileage": 98000,
+    "asking_price": 4200,
+    "location": "Stockton, CA",
+    "title_status": "salvage",
+    "condition_notes": "Rebuilt after front collision, check engine light on",
+    "seller": "private",
+    "source": "offerup",
+    "url": "https://offerup.com/item/example-328i"
+  }
+]

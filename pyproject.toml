@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dealfinder"
+version = "0.1.0"
+description = "AI vehicle deal finder agent: finds underpriced vehicles with >= $5,000 realistic expected profit"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40",
+    "pydantic>=2.5",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+dealfinder = "dealfinder.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["dealfinder*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
